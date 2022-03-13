@@ -37,6 +37,7 @@ class Baza_de_date /// baza de date = array cu persoane, respectiv cate sunt
 
 public:
     friend class Persoana;
+    friend ostream &operator<< (ostream &out, Persoana p);
 
     //constructor
     Baza_de_date(){v=new Persoana[10000], numar_persoane=0;}
@@ -271,6 +272,18 @@ int main()
 }
 
 
+///Suprascrierea operatorilor <<
+
+ostream &operator<< (ostream &out, Persoana p)
+{
+    if(p.GetSex()=='F')
+        out<<p.GetNume()<<" ("<<p.GetSex()<<"eminin), nascuta in anul "<<p.GetAnNastere()<<endl;
+    else out<<p.GetNume()<<" ("<<p.GetSex()<<"asculin), nascut in anul "<<p.GetAnNastere()<<endl;
+
+    return out;
+}
+
+
 
 ///Metodele folosite in clasa Baza_de_date
 
@@ -364,8 +377,6 @@ void Baza_de_date::Afisare() // AFISAREA, PUR SI SIMPLU, A PERSOANELOR STOCATE S
     {
         cout<<"\n Persoanele existente in baza dumneavoastra, alaturi de datele acestora sunt:\n\n";
         for(int i=1; i<=numar_persoane; i++)
-            if(v[i].GetSex()=='F')
-                cout<<v[i].GetNume()<<" ("<<v[i].GetSex()<<"eminin), nascuta in anul "<<v[i].GetAnNastere()<<endl;
-            else cout<<v[i].GetNume()<<" ("<<v[i].GetSex()<<"asculin), nascut in anul "<<v[i].GetAnNastere()<<endl;
+                operator<<(cout, v[i]); //suprascriere <<
     }
 }
