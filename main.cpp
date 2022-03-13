@@ -19,12 +19,14 @@ class Persoana ///obiectul persoana cu informatii despre nume, an_nastere, respe
     int an_nastere;
     char sex;
 public:
-    //functii set
+    friend istream &operator>> (istream &in, Persoana &p);
+
+    //setteri
     void SetNume(string nume){this->nume=nume;}
     void SetAnNastere(int an_nastere){this->an_nastere=an_nastere;}
     void SetSex(char sex){this->sex=sex;}
 
-    //functii get
+    //getteri
     string GetNume(){return nume;}
     int GetAnNastere(){return an_nastere;}
     char GetSex(){return sex;}
@@ -34,7 +36,8 @@ class Baza_de_date /// baza de date = array cu persoane, respectiv cate sunt
 {
     int numar_persoane;
     Persoana *v;
-
+    //nu sunt necesari setteri/getteri pentru aceste date, deoarece obiectul baza_de_date este
+    //doar un instrument de stocare pentru obiectele persoana, cele care au de fapt nevoie de metode de manipulare a valorilor atributelor
 public:
     friend class Persoana;
     friend ostream &operator<< (ostream &out, Persoana p);
@@ -69,7 +72,6 @@ public:
 int main()
 {
     char raspuns[10];
-    ///acces la ora calculatorului!!!!
 
     cout<<"Hello world!\n\n";
     cout<<" Doriti sa creati o baza de date? (da/nu/nu stiu) \n\nRaspunsul dumneavoastra: "; cin.getline(raspuns, 10);
@@ -106,16 +108,9 @@ int main()
                             cout<<"\n\n Ati ales optiunea de inserare a persoanelor in baza dumneavoatra de date:\n";
                             b.Afisare();
 
-                            string nume;
-                            int an_nastere;
-                            char sex;
-
-                            cout<<"\n\n  Datele persoanei sunt:\n";
-                            cout<<"Nume: "; cin>>nume, cin.get();
-                            cout<<"Anul in care s-a nascut: "; cin>>an_nastere;
-                            cout<<"Sex (M/F): "; cin>>sex;
-
-                            b.Adaugare(nume, an_nastere, sex);
+                            Persoana p;
+                            operator>>(cin, p); //supraincarcare >> => citirea tuturor datelor necesare unei persoane din baza de date
+                            b.Adaugare(p.GetNume(), p.GetAnNastere(), p.GetSex());
 
                             cout<<" \nMai doriti sa adugati pe cineva? (da=1, nu=0)\nRaspunsul dumneavoastra: "; cin>>adaugare;
 
@@ -272,9 +267,9 @@ int main()
 }
 
 
-///Suprascrierea operatorilor <<
+///Suprascrierea operatorilor << , >>
 
-ostream &operator<< (ostream &out, Persoana p)
+ostream &operator<< (ostream &out, Persoana p) // afisare date persoana: nume, an_nastere, sex
 {
     if(p.GetSex()=='F')
         out<<p.GetNume()<<" ("<<p.GetSex()<<"eminin), nascuta in anul "<<p.GetAnNastere()<<endl;
@@ -283,7 +278,16 @@ ostream &operator<< (ostream &out, Persoana p)
     return out;
 }
 
+istream &operator>> (istream &in, Persoana &p) // citire date persoana: nume, an_nastere, sex
+{
 
+    cout<<"\n\n  Datele persoanei sunt:\n";
+    cout<<"Nume: "; in>>p.nume, cin.get();
+    cout<<"Anul in care s-a nascut: "; in>>p.an_nastere;
+    cout<<"Sex (M/F): "; in>>p.sex;
+
+    return in;
+}
 
 ///Metodele folosite in clasa Baza_de_date
 
@@ -366,7 +370,7 @@ void Baza_de_date::VarstaCrescator() // AFISAREA PERSOANELOR IN ORDINEA CRESCATO
 {
     for(int i=1; i<numar_persoane; i++)
         for(int j=i+1; j<=numar_persoane; j++)
-            if(v[i].GetAnNastere()>v[j].GetAnNastere())
+            if(v[i].GetAnNastere()<v[j].GetAnNastere())
                 swap(v[i], v[j]);
 }
 void Baza_de_date::Afisare() // AFISAREA, PUR SI SIMPLU, A PERSOANELOR STOCATE SAU A BAZEI DE DATE VIDE DACA ESTE CAZUL
